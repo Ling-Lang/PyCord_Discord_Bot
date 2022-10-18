@@ -3,7 +3,6 @@ from multiprocessing import AuthenticationError
 from pydoc import describe
 from sys import stdin
 import this
-from time import sleep
 import discord
 from keyboard import wait
 from paramiko import SSHClient
@@ -12,7 +11,7 @@ import requests
 
 
 bot = discord.Bot(intents = discord.Intents.all())
-b_name = "@testing_bot"
+b_name = "testing_bot"
 client = SSHClient()
 is_online = False
 
@@ -69,7 +68,7 @@ async def startserver(ctx):
 async def online(ctx):
     response = requests.get('https://api.mcsrvstat.us/2/play.dylanderechte.online')
     if response.json()['online'] == True:
-        await ctx.respond(f"Online")
+        await ctx.respond(f"Server is online!")
         is_online = True
     else:
         await ctx.respond(f"Offline")
