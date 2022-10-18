@@ -1,5 +1,6 @@
 from dis import disco
 from multiprocessing import AuthenticationError
+import pwd
 from pydoc import describe
 from sys import stdin
 import this
@@ -46,22 +47,22 @@ async def connect(ctx, pwd: str):
     out = stdout.read().decode("utf8")
     await ctx.respond(f"Output: \n {out}")
 
+@bot.slash_command(description="Starting Server")
+async def startserver(ctx):
+    await ctx.respond(f"Starting Server...")
+    stdin, stdout, stderr = client.exec_command('cd ~; ./test.sh')
+    out = stdout.read().decode("utf8")
+    await ctx.respond(f"Output: \n {out}")
+
+
 # Disconnect from server
 @bot.slash_command(description="Disconnect from the server")
 async def disconnect(ctx):
-    await ctx.respond(f"Disconnecting...")
-    if (is_online == True):
-        # stdin, stdout, stderr = client.exec_command('stop')
-        client.close()
-    else:
-        client.close()
+    await ctx.respond(f"Disconnected from server!")
+    stdin, stdout, stderr = client.exec_command('exit')
+    client.close()
     await ctx.respond(f"Disconnected!")
 
-# Start mc server
-@bot.slash_command(desciption="Start the Mc server")
-async def startserver(ctx):
-    stdin, stdout, stderr = client.exec_command('./test.sh')
-    await ctx.respond(f"Starting server...")
 
 # Check if Online
 @bot.slash_command(description="Check if server is online")
@@ -72,7 +73,6 @@ async def online(ctx):
         is_online = True
     else:
         await ctx.respond(f"Offline")
-
     
 
 bot.run("MTAyNzI5OTAzNzI0Mzc3Mjk5OA.GWjZe7.ygoC7BU7vEt_omJWA8PJBZXAhGPMRWFUMTFeI4")
