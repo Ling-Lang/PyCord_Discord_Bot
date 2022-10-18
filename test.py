@@ -1,11 +1,4 @@
-from dis import disco
-from multiprocessing import AuthenticationError
-import pwd
-from pydoc import describe
-from sys import stdin
-import this
 import discord
-from keyboard import wait
 from paramiko import SSHClient
 import requests
 
