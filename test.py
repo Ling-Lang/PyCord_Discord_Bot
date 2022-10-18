@@ -51,7 +51,7 @@ async def connect(ctx, pwd: str):
 async def disconnect(ctx):
     await ctx.respond(f"Disconnecting...")
     if (is_online == True):
-        stdin, stdout, stderr = client.exec_command('stop')
+        # stdin, stdout, stderr = client.exec_command('stop')
         client.close()
     else:
         client.close()
