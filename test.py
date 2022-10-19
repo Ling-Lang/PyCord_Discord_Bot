@@ -1,3 +1,4 @@
+from code import interact
 import discord
 from paramiko import SSHClient
 import requests
@@ -74,13 +75,13 @@ async def test(ctx):
     async def callback(interaction: discord.Interaction):
         await interaction.response.send_message("Connecting to server!", ephemeral=True)
         connecttoserver()
-        await interaction.response.send_message(f"Connected: \n {connecttoserver().out}")
+        await interaction.response.edit_message("Connected:  {out}")
     
     button.callback = callback
     view = discord.ui.View()
     view.add_item(button)
     await ctx.send("test" , view=view)
-
+out = "string"
 def connecttoserver():
     client.load_system_host_keys()
     client.connect('play.dylanderechte.online', username="root", password="Dylan@Server")
