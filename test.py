@@ -67,5 +67,25 @@ async def online(ctx):
     else:
         await ctx.respond(f"Offline")
     
+@bot.command()
+async def test(ctx):
+    button = discord.ui.Button(label="Click me!", style=discord.ButtonStyle.primary, emoji="<:herr_goetter:945325132480643132>")
+    view = discord.ui.View(button=button)
+    # view.add_item(button)
+    await ctx.send("test" , view=view)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 bot.run("MTAyNzI5OTAzNzI0Mzc3Mjk5OA.GWjZe7.ygoC7BU7vEt_omJWA8PJBZXAhGPMRWFUMTFeI4")
