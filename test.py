@@ -70,11 +70,23 @@ async def online(ctx):
 @bot.command()
 async def test(ctx):
     button = discord.ui.Button(label="Click me!", style=discord.ButtonStyle.primary, emoji="<:herr_goetter:945325132480643132>")
-    view = discord.ui.View(button=button)
-    # view.add_item(button)
+
+    async def callback(interaction: discord.Interaction):
+        await interaction.response.send_message("Connecting to server!", ephemeral=True)
+        connecttoserver()
+        await interaction.response.send_message(f"Connected: \n {connecttoserver().out}")
+    
+    button.callback = callback
+    view = discord.ui.View()
+    view.add_item(button)
     await ctx.send("test" , view=view)
 
-
+def connecttoserver():
+    client.load_system_host_keys()
+    client.connect('play.dylanderechte.online', username="root", password="Dylan@Server")
+    stdin, stdout, stderr = client.exec_command('cd ~; ls')
+    out = stdout.read().decode("utf8")
+    print(out)
 
 
 
