@@ -1,3 +1,4 @@
+import asyncio
 import discord
 from paramiko import SSHClient
 import requests
@@ -76,39 +77,58 @@ async def test(ctx):
     button5 = discord.ui.Button(label="Player Count", style=discord.ButtonStyle.primary, emoji="<:sgpeople:1003299502834319360>")
     # button6 = discord.ui.Button(label="Stop Server", style=discord.ButtonStyle.primary, emoji="<:stop:980007702698799115>")
     async def callback(interaction: discord.Interaction):
-        await interaction.response.send_message("Connecting to server!", ephemeral=False)
-        await connecttoserver()
+        await ctx.defer()
+        await asyncio.sleep(1)
+        await ctx.followup.send("Connecting to server!", ephemeral=False)
+        await connecttoserver(ctx)
+
+
     async def callback2(interaction: discord.Interaction):
         await interaction.response.send_message("Starting Server!", ephemeral=False)
         startserver()
+
+
     async def callback3(interaction: discord.Interaction):
         await interaction.response.send_message("Disconnecting from server!", ephemeral=False)
         await disonnectfromserver(ctx)
+
+
     async def callback4(interaction: discord.Interaction):
         await interaction.response.send_message("Checking if online!", ephemeral=False)
         await checkonline(ctx)
+
+
     async def callback5(interaction: discord.Interaction):
         await interaction.response.send_message("Getting player count!", ephemeral=False)
         await playercount(ctx)
+
+
     # async def callback6(interaction: discord.Interaction):
     #     await interaction.response.send_message("Stopping Server!", ephemeral=False)
     #     await stopserver(ctx)
+
+
     button.callback = callback
     button2.callback = callback2
     button3.callback = callback3
     button4.callback = callback4
     button5.callback = callback5
     # button6.callback = callback6
-    view = discord.ui.View(button, button2, button3, button4, button5)
-    await ctx.send("test" , view=view)
+    view = discord.ui.View()
+    view.add_item(button)
+    view.add_item(button2)
+    view.add_item(button3)
+    view.add_item(button4)
+    view.add_item(button5)
+    await ctx.send("s" , view=view)
 
 async def connecttoserver(ctx):
     client.load_system_host_keys()
     client.connect('play.dylanderechte.online', username="root", password="Dylan@Server")
-    # stdin, stdout, stderr = client.exec_command('cd ~; ls')
-    # out = stdout.read().decode("utf8")
-    # print(out)
-    #await ctx.respond(f"Connected to the Server!")
+    stdin, stdout, stderr = client.exec_command('cd ~; ls')
+    out = stdout.read().decode("utf8")
+    print(out)
+    await ctx.respond(f"Connected to the Server!")
     #stdin, stdout, stderr = client.exec_command('tmux new -s server')
 
 def startserver():
