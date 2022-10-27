@@ -20,7 +20,10 @@ is_online = False
 #    await member.add_roles(role)
 #    await ctx.respond(f"You got the role {role}, {name}!")
 
-# Establishing a connection to the server and ls command print as discord message
+@bot.slash_command(description="Updates the bot")
+async def startup(ctx):
+    await startup(ctx)
+
 @bot.slash_command(description="Connect to Server")
 @commands.has_role("server")
 async def connect(ctx, pwd: str):
@@ -105,6 +108,13 @@ async def stopserver(ctx):
      stdin, stdout, stderr = client.exec_command('stop')
      await ctx.respond(f"Server stopped!")
      client.send(chr(3))
+
+async def startup(ctx):
+    await ctx.respond(f"Bot is online!")
+    response = requests.get('https://api.mcsrvstat.us/2/play.dylanderechte.online')
+    status = response.json()['motd']['clean']
+    await bot.change_presence(activity=discord.Game(name= status))
+    await ctx.respond(f"Type /help to see all commands!")
 
 
 
