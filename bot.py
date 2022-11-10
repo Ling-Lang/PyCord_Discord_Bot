@@ -1,7 +1,9 @@
 import discord
+import tok
 from paramiko import SSHClient
 import requests
 import asyncio
+import json
 from discord.ext import commands
 
 
@@ -49,19 +51,24 @@ async def disconnect(ctx):
 
 # Check if Online
 @bot.slash_command(description="Check if server is online")
-async def online(ctx):
-    await checkonline(ctx)
+async def online(ctx, serv: str):
+    await checkonline(ctx, serv)
 
 # Check player count
 @bot.slash_command(description="Check player count")
-async def playercount(ctx):
-    await playercount(ctx)
+async def playercount(ctx, server: str):
+    await playercount(ctx, server)
 
 # Stop server
 @bot.slash_command(description="Stop the server")
 @commands.has_role("server")
 async def stopserver(ctx):
     await stopserver(ctx)
+
+# Get Player Names
+@bot.slash_command(description="Display all Players currently online")
+async def getplayer(ctx, serverip:str):
+    await get_player(ctx, serverip)
 
 
 async def connecttoserver(ctx):
@@ -87,16 +94,18 @@ async def disonnectfromserver(ctx):
     await ctx.respond(f"Disconnected from Server!")
     client.close()
 
-async def checkonline(ctx):
-    response = requests.get('https://api.mcsrvstat.us/2/play.dylanderechte.online')
+async def checkonline(ctx, serv: str):
+    response = requests.get(f"https://api.mcsrvstat.us/2/{serv}")
     if response.json()['online'] == True:
-       await ctx.respond(f"Server is online!")
+       print(response)
+       await ctx.respond(f"Server {serv} is online!")
        is_online = True
     else:
+        print(response)
         await ctx.respond(f"Server is offline!")
 
-async def playercount(ctx):
-    response = requests.get('https://api.mcsrvstat.us/2/play.dylanderechte.online')
+async def playercount(ctx, server:str):
+    response = requests.get(f'https://api.mcsrvstat.us/2/{server}')
     res1 = response.json()['players']['online']
     res2 = response.json()['players']['max']
     await ctx.respond(f"There are {res1} out of {res2} players online!")
@@ -116,6 +125,15 @@ async def startup(ctx):
     await bot.change_presence(activity=discord.Game(name= status))
     await ctx.respond(f"Type /help to see all commands!")
 
-
-
-bot.run("MTAyNzI5OTAzNzI0Mzc3Mjk5OA.GWjZe7.ygoC7BU7vEt_omJWA8PJBZXAhGPMRWFUMTFeI4")
+#Get Playernames
+async def get_player(ctx, ServerIP:str):
+    await ctx.respond("Getting PLayer Names")
+    response = requests.get(f"https://api.mcsrvstat.us/2/{ServerIP}")
+    playerlist = response.json()['players']['list']
+    print(playerlist)
+    json.dumps(playerlist)
+    print(type(playerlist))
+    res = playerlist.split(',')
+    answer = [playerlist.split() for playerlist in res if playerlist]
+    print(res)
+bot.run(tok.token)
