@@ -28,8 +28,8 @@ async def startbot(ctx):
 
 @bot.slash_command(description="Connect to Server")
 @commands.has_role("server")
-async def connect(ctx, pwd: str):
-    usr = "root"
+async def connect(ctx,usr: str , pwd: str, server_ip: discord.Option(str, "Select server to connect to", choices=['play.dylanderechte.online'])):
+    # usr = "root"
     await ctx.respond(f"Connecting to {usr}...")
     client.load_system_host_keys()
     client.connect('play.dylanderechte.online', username=usr, password=pwd)
