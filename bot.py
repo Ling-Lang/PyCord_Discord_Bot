@@ -56,8 +56,8 @@ async def online(ctx, server_ip: discord.Option(str, "Select server to check", c
 
 # Check player count
 @bot.slash_command(description="Check player count")
-async def playercount(ctx, server: str):
-    await playercount(ctx, server)
+async def playercount(ctx, server_ip: discord.option(str, "Select Server to check Playercount", choices=['play.dylanderechte.online', '178.254.38.26'])):
+    await playercount(ctx, server_ip)
 
 # Stop server
 @bot.slash_command(description="Stop the server")
@@ -127,7 +127,7 @@ async def startup(ctx):
 
 #Get Playernames
 async def get_player(ctx, ServerIP:str):
-    await ctx.respond("Getting PLayer Names")
+    await ctx.respond("Getting Player Names")
     response = requests.get(f"https://api.mcsrvstat.us/2/{ServerIP}")
     playerlist = response.json()['players']['list']
     print(playerlist)
