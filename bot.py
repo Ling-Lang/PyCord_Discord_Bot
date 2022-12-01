@@ -23,7 +23,7 @@ is_online = False
 #    await ctx.respond(f"You got the role {role}, {name}!")
 
 @bot.slash_command(description="Updates the bot")
-async def startup(ctx):
+async def startbot(ctx):
     await startup(ctx)
 
 @bot.slash_command(description="Connect to Server")
@@ -51,8 +51,8 @@ async def disconnect(ctx):
 
 # Check if Online
 @bot.slash_command(description="Check if server is online")
-async def online(ctx, serv: str):
-    await checkonline(ctx, serv)
+async def online(ctx, server_ip: discord.Option(str, "Select server to check", choices=['play.dylanderechte.online', '178.254.38.26'])):
+    await checkonline(ctx, server_ip)
 
 # Check player count
 @bot.slash_command(description="Check player count")
