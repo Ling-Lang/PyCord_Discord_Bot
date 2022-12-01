@@ -56,7 +56,7 @@ async def online(ctx, server_ip: discord.Option(str, "Select server to check", c
 
 # Check player count
 @bot.slash_command(description="Check player count")
-async def playercount(ctx, server_ip: discord.option(str, "Select Server to check Playercount", choices=['play.dylanderechte.online', '178.254.38.26'])):
+async def playercount(ctx, server_ip: discord.Option(str, "Select Server to check Playercount", choices=['play.dylanderechte.online', '178.254.38.26'])):
     await playercount(ctx, server_ip)
 
 # Stop server
