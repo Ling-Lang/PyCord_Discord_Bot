@@ -4,7 +4,7 @@ from paramiko import SSHClient
 import requests
 import asyncio
 import json
-from discord.ext import commands
+# from discord.ext import commands
 
 
 bot = discord.Bot(intents = discord.Intents.all())
@@ -27,7 +27,6 @@ async def startbot(ctx):
     await startup(ctx)
 
 @bot.slash_command(description="Connect to Server")
-@commands.has_role("server")
 async def connect(ctx,usr: str , pwd: str, server_ip: discord.Option(str, "Select server to connect to", choices=['play.dylanderechte.online'])):
     # usr = "root"
     await ctx.respond(f"Connecting to {usr}...")
@@ -39,13 +38,13 @@ async def connect(ctx,usr: str , pwd: str, server_ip: discord.Option(str, "Selec
 #    await ctx.respond(f"Output: \n {out}")
 
 @bot.slash_command(description="Starting Server")
-@commands.has_role("server")
+# @commands.has_role("server")
 async def startserver(ctx):
     await startserver(ctx)
 
 # Disconnect from server
 @bot.slash_command(description="Disconnect from the server")
-@commands.has_role("server")
+# @commands.has_role("server")
 async def disconnect(ctx):
     await disonnectfromserver(ctx)
 
@@ -61,7 +60,7 @@ async def playercount(ctx, server_ip: discord.Option(str, "Select Server to chec
 
 # Stop server
 @bot.slash_command(description="Stop the server")
-@commands.has_role("server")
+# @commands.has_role("server")
 async def stopserver(ctx):
     await stopserver(ctx)
 
@@ -70,6 +69,10 @@ async def stopserver(ctx):
 async def getplayer(ctx, serverip:str):
     await get_player(ctx, serverip)
 
+# Get Mod List
+@bot.slash_command(description="Display all Mods currently installed")
+async def getmods(ctx, serverip:str):
+    await get_mods(ctx, serverip)
 
 async def connecttoserver(ctx):
     client.load_system_host_keys()
@@ -121,19 +124,54 @@ async def stopserver(ctx):
 async def startup(ctx):
     await ctx.respond(f"Bot is online!")
     response = requests.get('https://api.mcsrvstat.us/2/play.dylanderechte.online')
-    status = response.json()['motd']['clean']
-    await bot.change_presence(activity=discord.Game(name= status))
+    status = response.json()['motd']['clean'][0]
+    await bot.change_presence(activity=discord.Game(name=status))
     await ctx.respond(f"Type /help to see all commands!")
 
 #Get Playernames
 async def get_player(ctx, ServerIP:str):
+    await ctx.respond("Checking for online players")
+    check = requests.get(f"https://api.mcsrvstat.us/2/{ServerIP}")
+    if check.json()['players']['online'] == 0:
+        await ctx.respond("No players online")
+        return
     await ctx.respond("Getting Player Names")
     response = requests.get(f"https://api.mcsrvstat.us/2/{ServerIP}")
     playerlist = response.json()['players']['list']
     print(playerlist)
     json.dumps(playerlist)
     print(type(playerlist))
-    res = playerlist.split(',')
-    answer = [playerlist.split() for playerlist in res if playerlist]
-    print(res)
+    playerlist.sort()
+    playerlist = json.dumps(playerlist)
+    playerlist = playerlist.replace('"', '')
+    playerlist = playerlist.replace('[', '')
+    playerlist = playerlist.replace(']', '')
+    await ctx.respond(f"Players online: {playerlist}")
+
+#Get mod list
+async def get_mods(ctx, ServerIP:str):
+    await ctx.respond("Checking for mods")
+    check = requests.get(f"https://api.mcsrvstat.us/2/{ServerIP}")
+    
+    with open('file.json', 'wb') as f:
+        f.write(check.content)
+    with open('file.json', 'r') as f:
+        data = json.load(f)
+    if 'mods' not in data:
+        await ctx.respond("This server has no mods installed")
+        await ctx.respond("If you think this is a mistake, please contact the server owner")
+        return
+    await ctx.respond("Getting mod list")
+    response = requests.get(f"https://api.mcsrvstat.us/2/play.dylanderechte.online")
+    modlist = response.json()['mods']['names']
+    modlist.sort()
+    modlist = json.dumps(modlist)
+    modlist = modlist.replace('"', '')
+    modlist = modlist.replace('[', '')
+    modlist = modlist.replace(']', '')
+    print(modlist)
+    with open('modlist.json', 'w') as f:
+        json.dump(modlist, f)
+    js = json.load(open('modlist.json'))
+    await ctx.send("Mods installed on this server: \n", file=discord.File('modlist.json'))
 bot.run(tok.token)
